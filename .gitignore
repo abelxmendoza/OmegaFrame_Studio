@@ -1,0 +1,16 @@
+node_modules/
+.env
+.env.local
+.next/
+dist/
+build/
+*.pyc
+__pycache__/
+.python-version
+venv/
+env/
+*.log
+.DS_Store
+apps/python-renderer/projects/
+apps/python-renderer/renders/
+

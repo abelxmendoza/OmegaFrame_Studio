@@ -1,0 +1,7 @@
+# This file ensures the images directory is tracked by git
+# Add your logo files here:
+# - logo.png (recommended: 512x512px or larger)
+# - logo.svg (vector format, scalable)
+# - logo-icon.png (icon-only version)
+# - favicon.ico (browser favicon)
+
