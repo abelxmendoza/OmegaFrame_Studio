@@ -56,6 +56,11 @@ export function useProjectSync({ projectId, autoSaveDelay = 1500, enabled = true
             prompt: scene.prompt,
           })),
           status: data.status || 'draft',
+          seoTitle: data.seo_title || undefined,
+          seoDescription: data.seo_description || undefined,
+          seoTags: data.seo_tags || undefined,
+          seoHashtags: data.seo_hashtags || undefined,
+          seoChapters: data.seo_chapters || undefined,
           createdAt: data.created_at,
           updatedAt: data.updated_at,
         }
@@ -89,6 +94,11 @@ export function useProjectSync({ projectId, autoSaveDelay = 1500, enabled = true
           title: project.name,
           script: project.script,
           status: project.status || 'draft',
+          seo_title: project.seoTitle || null,
+          seo_description: project.seoDescription || null,
+          seo_tags: project.seoTags || null,
+          seo_hashtags: project.seoHashtags || null,
+          seo_chapters: project.seoChapters || null,
         })
 
         // Sync scenes if they exist
@@ -120,7 +130,19 @@ export function useProjectSync({ projectId, autoSaveDelay = 1500, enabled = true
         clearTimeout(saveTimer.current)
       }
     }
-  }, [project?.name, project?.script, project?.status, projectId, enabled, autoSaveDelay])
+  }, [
+    project?.name,
+    project?.script,
+    project?.status,
+    project?.seoTitle,
+    project?.seoDescription,
+    project?.seoTags,
+    project?.seoHashtags,
+    project?.seoChapters,
+    projectId,
+    enabled,
+    autoSaveDelay,
+  ])
 
   // Manual save function
   const saveNow = useCallback(async () => {
@@ -132,6 +154,11 @@ export function useProjectSync({ projectId, autoSaveDelay = 1500, enabled = true
         title: project.name,
         script: project.script,
         status: project.status || 'draft',
+        seo_title: project.seoTitle || null,
+        seo_description: project.seoDescription || null,
+        seo_tags: project.seoTags || null,
+        seo_hashtags: project.seoHashtags || null,
+        seo_chapters: project.seoChapters || null,
       })
 
       if (project.scenes && project.scenes.length > 0) {

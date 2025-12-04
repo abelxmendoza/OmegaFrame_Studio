@@ -9,6 +9,7 @@ import { useProjectSync } from '@/hooks/useProjectSync'
 import Logo from '@/components/Logo'
 import BackButton from '@/components/BackButton'
 import PersistenceStatus from '@/components/PersistenceStatus'
+import { ProjectThumbnail } from '@/components/thumbnails/ProjectThumbnail'
 
 export default function ProjectOverview() {
   const params = useParams()
@@ -88,6 +89,16 @@ export default function ProjectOverview() {
         </div>
         <div className="flex items-center gap-4">
           <Logo size="md" showText={false} className="hidden md:flex" />
+          {/* Project Thumbnail */}
+          {(project.thumbnail || project.thumbnail_url) && (
+            <div className="hidden md:block w-32 h-20 rounded-lg overflow-hidden border border-omega-border">
+              <ProjectThumbnail
+                src={project.thumbnail_url || project.thumbnail}
+                alt={project.name}
+                className="w-full h-full"
+              />
+            </div>
+          )}
           <div className="flex-1">
             {isEditingName ? (
               <div className="flex items-center gap-3">

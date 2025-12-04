@@ -39,6 +39,11 @@ interface Project {
   createdAt?: string
   updatedAt?: string
   templateId?: string
+  seoTitle?: string
+  seoDescription?: string
+  seoTags?: string[]
+  seoHashtags?: string[]
+  seoChapters?: Array<{ time: string; title: string }>
 }
 
 interface ProjectState {
@@ -257,6 +262,15 @@ const projectSlice = createSlice({
         state.projects[action.payload.projectId].updatedAt = new Date().toISOString()
       }
     },
+    updateProjectThumbnail: (
+      state,
+      action: PayloadAction<{ projectId: string; thumbnail: string }>
+    ) => {
+      if (state.projects[action.payload.projectId]) {
+        state.projects[action.payload.projectId].thumbnail = action.payload.thumbnail
+        state.projects[action.payload.projectId].updatedAt = new Date().toISOString()
+      }
+    },
     reorderClips: (
       state,
       action: PayloadAction<{ projectId: string; newOrder: Clip[] }>
@@ -278,6 +292,37 @@ const projectSlice = createSlice({
         }
       }
     },
+    updateSEO: (
+      state,
+      action: PayloadAction<{
+        projectId: string
+        seoTitle?: string
+        seoDescription?: string
+        seoTags?: string[]
+        seoHashtags?: string[]
+        seoChapters?: Array<{ time: string; title: string }>
+      }>
+    ) => {
+      const project = state.projects[action.payload.projectId]
+      if (project) {
+        if (action.payload.seoTitle !== undefined) {
+          project.seoTitle = action.payload.seoTitle
+        }
+        if (action.payload.seoDescription !== undefined) {
+          project.seoDescription = action.payload.seoDescription
+        }
+        if (action.payload.seoTags !== undefined) {
+          project.seoTags = action.payload.seoTags
+        }
+        if (action.payload.seoHashtags !== undefined) {
+          project.seoHashtags = action.payload.seoHashtags
+        }
+        if (action.payload.seoChapters !== undefined) {
+          project.seoChapters = action.payload.seoChapters
+        }
+        project.updatedAt = new Date().toISOString()
+      }
+    },
   },
 })
 
@@ -291,8 +336,10 @@ export const {
   updateProjectVoice,
   updateProjectName,
   setRenderOutput,
+  updateProjectThumbnail,
   reorderClips,
   setClipTrim,
+  updateSEO,
 } = projectSlice.actions
 export default projectSlice.reducer
 

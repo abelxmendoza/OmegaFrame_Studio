@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useAppDispatch } from '@/redux/hooks'
 import { updateProjectName } from '@/redux/projectSlice'
+import { ProjectThumbnail } from './thumbnails/ProjectThumbnail'
 
 interface ProjectCardProps {
   project: {
@@ -15,6 +16,9 @@ interface ProjectCardProps {
     status?: string
     createdAt?: string
     updatedAt?: string
+    thumbnail?: string
+    thumbnail_url?: string
+    videoUrl?: string
   }
 }
 
@@ -53,34 +57,18 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     <div className="bg-omega-panel border border-omega-border rounded-md p-6 hover:border-omega-accent/50 transition-all group">
       {/* Thumbnail */}
       <Link href={`/project/${project.id}`}>
-        {project.thumbnail ? (
-          <div className="w-full h-32 rounded mb-4 overflow-hidden border border-omega-border group-hover:border-omega-accent/30 transition-colors cursor-pointer relative">
-            <img
-              src={project.thumbnail.startsWith('http') ? project.thumbnail : `${process.env.NEXT_PUBLIC_PYTHON_RENDER_URL || 'http://localhost:8000'}${project.thumbnail}`}
-              alt={project.name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                // Fallback to placeholder if image fails to load
-                const target = e.target as HTMLImageElement
-                target.style.display = 'none'
-                const placeholder = target.nextElementSibling as HTMLElement
-                if (placeholder) placeholder.style.display = 'flex'
-              }}
-            />
-            <div className="w-full h-full bg-omega-bg flex items-center justify-center border border-omega-border group-hover:border-omega-accent/30 transition-colors cursor-pointer hidden">
-              <span className="text-omega-text/30 text-4xl">🎬</span>
+        <div className="w-full h-32 rounded mb-4 overflow-hidden border border-omega-border group-hover:border-omega-accent/30 transition-colors cursor-pointer relative">
+          <ProjectThumbnail
+            src={project.thumbnail_url || project.thumbnail}
+            alt={project.name}
+            className="w-full h-32"
+          />
+          {project.videoUrl && (
+            <div className="absolute top-2 right-2 bg-green-500/90 text-white text-xs font-bold px-2 py-1 rounded shadow-lg z-10">
+              ✓ Video Ready
             </div>
-            {project.videoUrl && (
-              <div className="absolute top-2 right-2 bg-green-500/90 text-white text-xs font-bold px-2 py-1 rounded">
-                ✓ Video Ready
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="w-full h-32 bg-omega-bg rounded mb-4 flex items-center justify-center border border-omega-border group-hover:border-omega-accent/30 transition-colors cursor-pointer">
-            <span className="text-omega-text/30 text-4xl">🎬</span>
-          </div>
-        )}
+          )}
+        </div>
       </Link>
 
       <div className="flex items-start justify-between mb-2">

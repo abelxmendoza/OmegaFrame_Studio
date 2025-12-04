@@ -12,6 +12,7 @@ import TimelineTrack from '@/components/timeline/TimelineTrack'
 import Scrubber from '@/components/timeline/Scrubber'
 import VideoPreview from '@/components/VideoPreview'
 import PersistenceStatus from '@/components/PersistenceStatus'
+import SEOPanel from '@/components/seo/SEOPanel'
 import { assembleVideo } from '@/lib/api'
 import ProjectNav from '@/components/ProjectNav'
 import BackButton from '@/components/BackButton'
@@ -202,6 +203,13 @@ export default function RenderPage() {
 
                 <RenderProgress projectId={id} />
               </>
+            )}
+
+            {/* SEO Publishing Suite */}
+            {project.script && project.script.length > 0 && (
+              <div className="mt-6">
+                <SEOPanel project={project} />
+              </div>
             )}
           </div>
         </div>

@@ -9,6 +9,12 @@ create table if not exists projects (
   description text,
   script text,
   status text default 'draft',
+  thumbnail_url text,
+  seo_title text,
+  seo_description text,
+  seo_tags text[],
+  seo_hashtags text[],
+  seo_chapters jsonb,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );

@@ -26,4 +26,5 @@ export interface OFTemplate {
   defaultLength: 'short' | 'medium' | 'long'
   description?: string
   thumbnail?: string
+  thumbnailPrompt?: string
 }

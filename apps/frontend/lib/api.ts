@@ -248,3 +248,59 @@ export async function checkVideoStatus(jobId: string, provider: string) {
   return result.data
 }
 
+export async function generateThumbnail(projectId: string, script: string, templateId?: string) {
+  const result = await retryWithBackoff(
+    async () => {
+      const res = await fetch(`${API_BASE}/api/thumbnail`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId, script, templateId }),
+      })
+      return handleApiResponse(res, 'generateThumbnail')
+    },
+    {
+      maxAttempts: 2, // Fewer retries for image generation
+      initialDelay: 2000,
+    }
+  )
+
+  if (!result.success) {
+    const errorInfo = categorizeError(result.error)
+    throw {
+      ...result.error,
+      userMessage: errorInfo.message,
+      retryable: errorInfo.retryable,
+    }
+  }
+
+  return result.data
+}
+
+export async function generateSEO(projectId: string, script: string, operation: string) {
+  const result = await retryWithBackoff(
+    async () => {
+      const res = await fetch(`${API_BASE}/api/seo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId, script, operation }),
+      })
+      return handleApiResponse(res, 'generateSEO')
+    },
+    {
+      maxAttempts: 2, // Fewer retries for SEO generation
+      initialDelay: 2000,
+    }
+  )
+
+  if (!result.success) {
+    const errorInfo = categorizeError(result.error)
+    throw {
+      ...result.error,
+      userMessage: errorInfo.message,
+      retryable: errorInfo.retryable,
+    }
+  }
+
+  return result.data
+}
+

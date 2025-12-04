@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid'
 import TemplatePicker from '@/components/TemplatePicker'
 import type { OFTemplate } from '@/shared/types'
 import Sidebar from '@/components/Sidebar'
+import { generateThumbnail } from '@/lib/api'
 
 export default function NewProjectPage() {
   const router = useRouter()
@@ -62,6 +63,15 @@ export default function NewProjectPage() {
           prompt: scene.prompt,
         }))
         dispatch(setScenes({ projectId: id, scenes }))
+      }
+
+      // Generate thumbnail asynchronously (don't block navigation)
+      const initialScript = selectedTemplate?.scriptStructure || ''
+      if (initialScript && initialScript.length > 0) {
+        generateThumbnail(id, initialScript, selectedTemplate?.id).catch((error) => {
+          console.error('Error generating thumbnail:', error)
+          // Thumbnail generation failure shouldn't block project creation
+        })
       }
 
       router.push(`/project/${id}`)

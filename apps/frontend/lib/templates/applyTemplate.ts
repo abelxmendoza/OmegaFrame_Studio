@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { store } from '@/redux/store'
 import { addProject, setScenes, setScript } from '@/redux/projectSlice'
-import { generateScript } from '@/lib/api'
+import { generateScript, generateThumbnail } from '@/lib/api'
 import { generateScriptPromptFromTemplate } from '../templateUtils'
 import type { OFTemplate } from '@/shared/types'
 import { createProject as createProjectDB } from '@/lib/supabase/projects'
@@ -75,6 +75,14 @@ export async function createProjectFromTemplate(template: OFTemplate): Promise<s
       console.error('Error creating project in Supabase:', error)
       // Continue with Redux-only project
     }
+  }
+
+  // Generate thumbnail asynchronously (don't block project creation)
+  if (script && script.length > 0) {
+    generateThumbnail(projectId, script, template.id).catch((error) => {
+      console.error('Error generating thumbnail:', error)
+      // Thumbnail generation failure shouldn't block project creation
+    })
   }
 
   return projectId

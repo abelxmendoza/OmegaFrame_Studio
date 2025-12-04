@@ -3,8 +3,9 @@
 import { useParams } from 'next/navigation'
 import { useAppSelector, useAppDispatch } from '@/redux/hooks'
 import { useState, useEffect } from 'react'
-import { setScript, setScenes } from '@/redux/projectSlice'
-import { generateScript, generateVoice } from '@/lib/api'
+import { setScript, setScenes, updateProjectThumbnail } from '@/redux/projectSlice'
+import { generateScript, generateVoice, generateThumbnail } from '@/lib/api'
+import { getTemplateById } from '@/lib/templates'
 import { parseScenesFromScript } from '@/lib/sceneParser'
 import { getTemplateGenerationPrompt } from '@/lib/templateUtils'
 import { store } from '@/redux/store'
@@ -26,6 +27,7 @@ export default function ScriptEditorPage() {
   const project = projects[id]
   const [loading, setLoading] = useState(false)
   const [generatingVoice, setGeneratingVoice] = useState(false)
+  const [generatingThumbnail, setGeneratingThumbnail] = useState(false)
 
   // Check if Supabase is configured
   const supabaseEnabled = !!(
@@ -116,6 +118,29 @@ export default function ScriptEditorPage() {
       alert('Failed to generate voice')
     } finally {
       setGeneratingVoice(false)
+    }
+  }
+
+  async function handleRegenerateThumbnail() {
+    if (!project?.script || project.script.length < 50) {
+      alert('Please write or generate a script first (at least 50 characters)')
+      return
+    }
+
+    setGeneratingThumbnail(true)
+    try {
+      const template = project.templateId ? getTemplateById(project.templateId) : null
+      const result = await generateThumbnail(id, project.script, project.templateId)
+      
+      // Update project thumbnail in Redux
+      dispatch(updateProjectThumbnail({ projectId: id, thumbnail: result.url }))
+      
+      alert('Thumbnail generated successfully!')
+    } catch (error: any) {
+      console.error('Error generating thumbnail:', error)
+      alert(error.userMessage || 'Failed to generate thumbnail')
+    } finally {
+      setGeneratingThumbnail(false)
     }
   }
 
@@ -239,6 +264,50 @@ export default function ScriptEditorPage() {
           {project.script && (
             <div className="text-sm text-omega-text/50">
               {project.script.split('\n').length} lines • {project.script.length} characters
+            </div>
+          )}
+
+          {/* Thumbnail Generation */}
+          {project.script && project.script.length > 50 && (
+            <div className="bg-omega-panel border border-omega-border rounded-md p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-omega-text mb-1">Project Thumbnail</h3>
+                  <p className="text-xs text-omega-text/50">
+                    Generate a custom thumbnail image for your project based on your script and template style.
+                  </p>
+                </div>
+                <button
+                  onClick={handleRegenerateThumbnail}
+                  disabled={generatingThumbnail}
+                  className="px-4 py-2 bg-omega-accent/30 border border-omega-accent/40 rounded-lg hover:bg-omega-accent/40 transition-all disabled:opacity-50 text-omega-text text-sm font-medium flex items-center gap-2"
+                >
+                  {generatingThumbnail ? (
+                    <>
+                      <span className="animate-spin">⏳</span>
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>🖼️</span>
+                      <span>{project.thumbnail ? 'Regenerate' : 'Generate'} Thumbnail</span>
+                    </>
+                  )}
+                </button>
+              </div>
+              {(project.thumbnail || project.thumbnail_url) && (
+                <div className="mt-3">
+                  <img
+                    src={project.thumbnail_url || project.thumbnail}
+                    alt="Project thumbnail"
+                    className="w-full max-w-xs rounded-md border border-omega-border shadow-lg"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement
+                      target.style.display = 'none'
+                    }}
+                  />
+                </div>
+              )}
             </div>
           )}
 

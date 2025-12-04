@@ -14,6 +14,11 @@ export interface ProjectUpdate {
   description?: string | null
   script?: string | null
   status?: string
+  seo_title?: string | null
+  seo_description?: string | null
+  seo_tags?: string[] | null
+  seo_hashtags?: string[] | null
+  seo_chapters?: Array<{ time: string; title: string }> | null
 }
 
 export async function createProject(data: ProjectInsert & { id?: string }) {
