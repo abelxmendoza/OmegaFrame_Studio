@@ -1,4 +1,4 @@
-# 🎬 OmegaFrame Studio
+# 🎬 OmegaFrames Studio
 
 **Transform your ideas into professional videos with AI-powered automation.**
 
